@@ -89,116 +89,119 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child: SingleChildScrollView(
+        child: ResponsiveMaxWidth(
+          maxWidth: 640,
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SizedBox(height: 12),
-              const BrandHeader(),
-              const SizedBox(height: 22),
-              GlassCard(
-                child: Form(
-                  key: _formKey,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Начало тестирования',
-                        style: Theme.of(context).textTheme.headlineSmall
-                            ?.copyWith(
-                              fontWeight: FontWeight.w700,
-                              color: const Color(0xFF0F172A),
-                            ),
-                      ),
-                      const SizedBox(height: 18),
-                      Text('Имя', style: _labelStyle),
-                      const SizedBox(height: 6),
-                      TextFormField(
-                        controller: _nameCtrl,
-                        decoration: const InputDecoration(
-                          hintText: 'Введите имя',
-                        ),
-                        validator: (value) =>
-                            (value == null || value.trim().isEmpty)
-                            ? 'Укажите имя'
-                            : null,
-                      ),
-                      const SizedBox(height: 14),
-                      Text('Фамилия', style: _labelStyle),
-                      const SizedBox(height: 6),
-                      TextFormField(
-                        controller: _surnameCtrl,
-                        decoration: const InputDecoration(
-                          hintText: 'Введите фамилию',
-                        ),
-                        validator: (value) =>
-                            (value == null || value.trim().isEmpty)
-                            ? 'Укажите фамилию'
-                            : null,
-                      ),
-                      const SizedBox(height: 14),
-                      Text('Группа', style: _labelStyle),
-                      const SizedBox(height: 6),
-                      _loadingMeta
-                          ? const Padding(
-                              padding: EdgeInsets.symmetric(vertical: 8),
-                              child: LinearProgressIndicator(minHeight: 6),
-                            )
-                          : SelectField<LabeledValue<int>>(
-                              hint: 'Выберите группу',
-                              value: _group,
-                              options: _groups,
-                              labelBuilder: (opt) => opt.label,
-                              onChanged: (v) => setState(() => _group = v),
-                              validator: (value) =>
-                                  value == null ? 'Выберите группу' : null,
-                            ),
-                      const SizedBox(height: 14),
-                      Text('Курс', style: _labelStyle),
-                      const SizedBox(height: 6),
-                      _loadingMeta
-                          ? const Padding(
-                              padding: EdgeInsets.symmetric(vertical: 8),
-                              child: LinearProgressIndicator(minHeight: 6),
-                            )
-                          : SelectField<LabeledValue<int>>(
-                              hint: 'Выберите курс',
-                              value: _course,
-                              options: _courses,
-                              labelBuilder: (opt) => opt.label,
-                              onChanged: (v) => setState(() => _course = v),
-                              validator: (value) =>
-                                  value == null ? 'Выберите курс' : null,
-                            ),
-                      if (_metaError != null) ...[
-                        const SizedBox(height: 8),
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(height: 12),
+                const BrandHeader(),
+                const SizedBox(height: 22),
+                GlassCard(
+                  child: Form(
+                    key: _formKey,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
                         Text(
-                          'Не удалось загрузить группы/курсы. Использованы заглушки.',
-                          style:
-                              TextStyle(color: Colors.red.shade400, fontSize: 12),
+                          'Начало тестирования',
+                          style: Theme.of(context).textTheme.headlineSmall
+                              ?.copyWith(
+                                fontWeight: FontWeight.w700,
+                                color: const Color(0xFF0F172A),
+                              ),
                         ),
-                        Text(
-                          _metaError!,
-                          style: const TextStyle(
-                            color: Color(0xFF9CA3AF),
-                            fontSize: 11,
+                        const SizedBox(height: 18),
+                        Text('Имя', style: _labelStyle),
+                        const SizedBox(height: 6),
+                        TextFormField(
+                          controller: _nameCtrl,
+                          decoration: const InputDecoration(
+                            hintText: 'Введите имя',
+                          ),
+                          validator: (value) =>
+                              (value == null || value.trim().isEmpty)
+                              ? 'Укажите имя'
+                              : null,
+                        ),
+                        const SizedBox(height: 14),
+                        Text('Фамилия', style: _labelStyle),
+                        const SizedBox(height: 6),
+                        TextFormField(
+                          controller: _surnameCtrl,
+                          decoration: const InputDecoration(
+                            hintText: 'Введите фамилию',
+                          ),
+                          validator: (value) =>
+                              (value == null || value.trim().isEmpty)
+                              ? 'Укажите фамилию'
+                              : null,
+                        ),
+                        const SizedBox(height: 14),
+                        Text('Группа', style: _labelStyle),
+                        const SizedBox(height: 6),
+                        _loadingMeta
+                            ? const Padding(
+                                padding: EdgeInsets.symmetric(vertical: 8),
+                                child: LinearProgressIndicator(minHeight: 6),
+                              )
+                            : SelectField<LabeledValue<int>>(
+                                hint: 'Выберите группу',
+                                value: _group,
+                                options: _groups,
+                                labelBuilder: (opt) => opt.label,
+                                onChanged: (v) => setState(() => _group = v),
+                                validator: (value) =>
+                                    value == null ? 'Выберите группу' : null,
+                              ),
+                        const SizedBox(height: 14),
+                        Text('Курс', style: _labelStyle),
+                        const SizedBox(height: 6),
+                        _loadingMeta
+                            ? const Padding(
+                                padding: EdgeInsets.symmetric(vertical: 8),
+                                child: LinearProgressIndicator(minHeight: 6),
+                              )
+                            : SelectField<LabeledValue<int>>(
+                                hint: 'Выберите курс',
+                                value: _course,
+                                options: _courses,
+                                labelBuilder: (opt) => opt.label,
+                                onChanged: (v) => setState(() => _course = v),
+                                validator: (value) =>
+                                    value == null ? 'Выберите курс' : null,
+                              ),
+                        if (_metaError != null) ...[
+                          const SizedBox(height: 8),
+                          Text(
+                            'Не удалось загрузить группы/курсы. Использованы заглушки.',
+                            style:
+                                TextStyle(color: Colors.red.shade400, fontSize: 12),
+                          ),
+                          Text(
+                            _metaError!,
+                            style: const TextStyle(
+                              color: Color(0xFF9CA3AF),
+                              fontSize: 11,
+                            ),
+                          ),
+                        ],
+                        const SizedBox(height: 20),
+                        SizedBox(
+                          width: double.infinity,
+                          child: ElevatedButton(
+                            onPressed: _continue,
+                            child: const Text('Продолжить'),
                           ),
                         ),
                       ],
-                      const SizedBox(height: 20),
-                      SizedBox(
-                        width: double.infinity,
-                        child: ElevatedButton(
-                          onPressed: _continue,
-                          child: const Text('Продолжить'),
-                        ),
-                      ),
-                    ],
+                    ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

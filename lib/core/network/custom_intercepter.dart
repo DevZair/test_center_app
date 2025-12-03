@@ -31,12 +31,17 @@ class CustomInterceptor extends Interceptor {
 
   @override
   void onError(DioException err, ErrorInterceptorHandler handler) {
+    final res = err.response;
+    final req = err.requestOptions;
+    final uri = res?.realUri ?? req.uri;
+    final status = res?.statusCode?.toString() ?? err.type.name;
     info('''
 ------------------------------------------------------------
-=== Error (${err.response?.statusCode}) ===
-=== Url: ${err.response?.realUri} ===
-=== Method (${err.response?.requestOptions.method}) ===
-=== Data: ${err.response?.data}
+=== Error ($status) ===
+=== Url: $uri ===
+=== Method (${req.method}) ===
+=== Message: ${err.message} ===
+=== Data: ${res?.data ?? err.error}
 ------------------------------------------------------------''');
     super.onError(err, handler);
   }

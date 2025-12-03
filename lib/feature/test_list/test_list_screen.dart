@@ -37,7 +37,8 @@ class _TestListScreenState extends State<TestListScreen> {
         animation: widget.appState,
         builder: (context, _) {
           final state = widget.appState;
-          return Padding(
+          return ResponsiveMaxWidth(
+            maxWidth: 1100,
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,

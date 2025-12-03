@@ -258,167 +258,180 @@ class _TestPlayerScreenState extends State<TestPlayerScreen> {
                 style: TextStyle(color: Color(0xFF6B7280)),
               ),
             )
-          : Column(
-              children: [
-                const SizedBox(height: 8),
-                SizedBox(
-                  height: 64,
-                  child: ListView.separated(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    scrollDirection: Axis.horizontal,
-                    itemBuilder: (context, index) {
-                      final isActive = index == _currentIndex;
-                      final isDone = _answers.containsKey(_test.questions[index].id);
-                      return GestureDetector(
-                        onTap: () => _goTo(index),
-                        child: AnimatedContainer(
-                          duration: const Duration(milliseconds: 180),
-                          width: 46,
-                          height: 46,
-                          alignment: Alignment.center,
-                          decoration: BoxDecoration(
-                            color: isActive
-                                ? Theme.of(context).colorScheme.primary
-                                : isDone
-                                    ? const Color(0xFFE0F2FE)
-                                    : Colors.white,
-                            borderRadius: BorderRadius.circular(12),
-                            border: Border.all(
+          : ResponsiveMaxWidth(
+              maxWidth: 1100,
+              padding: const EdgeInsets.symmetric(horizontal: 12),
+              child: Column(
+                children: [
+                  const SizedBox(height: 8),
+                  SizedBox(
+                    height: 64,
+                    child: ListView.separated(
+                      padding: const EdgeInsets.symmetric(horizontal: 8),
+                      scrollDirection: Axis.horizontal,
+                      itemBuilder: (context, index) {
+                        final isActive = index == _currentIndex;
+                        final isDone = _answers.containsKey(_test.questions[index].id);
+                        return GestureDetector(
+                          onTap: () => _goTo(index),
+                          child: AnimatedContainer(
+                            duration: const Duration(milliseconds: 180),
+                            width: 46,
+                            height: 46,
+                            alignment: Alignment.center,
+                            decoration: BoxDecoration(
                               color: isActive
                                   ? Theme.of(context).colorScheme.primary
-                                  : const Color(0xFFE5E7EB),
-                            ),
-                          ),
-                          child: Text(
-                            '${index + 1}',
-                            style: TextStyle(
-                              color: isActive
-                                  ? Colors.white
                                   : isDone
-                                      ? const Color(0xFF1E73EC)
-                                      : const Color(0xFF111827),
-                              fontWeight: FontWeight.w600,
+                                      ? const Color(0xFFE0F2FE)
+                                      : Colors.white,
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(
+                                color: isActive
+                                    ? Theme.of(context).colorScheme.primary
+                                    : const Color(0xFFE5E7EB),
+                              ),
+                            ),
+                            child: Text(
+                              '${index + 1}',
+                              style: TextStyle(
+                                color: isActive
+                                    ? Colors.white
+                                    : isDone
+                                        ? const Color(0xFF1E73EC)
+                                        : const Color(0xFF111827),
+                                fontWeight: FontWeight.w600,
+                              ),
                             ),
                           ),
-                        ),
-                      );
-                    },
-                    separatorBuilder: (context, index) => const SizedBox(width: 8),
-                    itemCount: _test.questions.length,
+                        );
+                      },
+                      separatorBuilder: (context, index) => const SizedBox(width: 8),
+                      itemCount: _test.questions.length,
+                    ),
                   ),
-                ),
-                const SizedBox(height: 12),
-                Expanded(
-                  child: PageView.builder(
-                    controller: _pageController,
-                    physics: const BouncingScrollPhysics(),
-                    onPageChanged: (index) => setState(() => _currentIndex = index),
-                    itemCount: _test.questions.length,
-                    itemBuilder: (context, index) {
-                      final question = _test.questions[index];
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
-                        child: GlassCard(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                children: [
-                                  Tag('Вопрос ${index + 1} из $total'),
-                                  const SizedBox(width: 8),
-                                  const Tag('Один ответ'),
-                                ],
-                              ),
-                              const SizedBox(height: 12),
-                              Text(
-                                question.title,
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .titleMedium
-                                    ?.copyWith(fontWeight: FontWeight.w700, height: 1.3),
-                              ),
-                              const SizedBox(height: 14),
-                              if (question.options.isEmpty)
-                                const Text(
-                                  'Ответы не переданы от сервера.',
-                                  style: TextStyle(color: Color(0xFF9CA3AF)),
-                                )
-                              else
-                                ...List.generate(question.options.length, (optionIndex) {
-                                  final isSelected = _answers[question.id] == optionIndex;
-                                  return Padding(
-                                    padding: const EdgeInsets.only(bottom: 10),
-                                    child: OptionTile(
-                                      label: question.options[optionIndex],
-                                      selected: isSelected,
-                                      onTap: () => _selectOption(question, optionIndex),
-                                    ),
-                                  );
-                                }),
-                              const Spacer(),
-                              Row(
-                                children: [
-                                  Expanded(
-                                    child: ElevatedButton(
-                                      onPressed: _currentIndex > 0 ? () => _goTo(_currentIndex - 1) : null,
-                                      style: ElevatedButton.styleFrom(
-                                        backgroundColor: Colors.white,
-                                        foregroundColor: const Color(0xFF1E73EC),
-                                        side: const BorderSide(color: Color(0xFFE5E7EB)),
-                                      ),
-                                      child: const Text('Назад'),
+                  const SizedBox(height: 12),
+                  Expanded(
+                    child: PageView.builder(
+                      controller: _pageController,
+                      physics: const BouncingScrollPhysics(),
+                      onPageChanged: (index) => setState(() => _currentIndex = index),
+                      itemCount: _test.questions.length,
+                      itemBuilder: (context, index) {
+                        final question = _test.questions[index];
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 8),
+                          child: LayoutBuilder(
+                            builder: (context, constraints) {
+                              return SingleChildScrollView(
+                                child: ConstrainedBox(
+                                  constraints: BoxConstraints(minHeight: constraints.maxHeight),
+                                  child: GlassCard(
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Row(
+                                          children: [
+                                            Tag('Вопрос ${index + 1} из $total'),
+                                            const SizedBox(width: 8),
+                                            const Tag('Один ответ'),
+                                          ],
+                                        ),
+                                        const SizedBox(height: 12),
+                                        Text(
+                                          question.title,
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .titleMedium
+                                              ?.copyWith(fontWeight: FontWeight.w700, height: 1.3),
+                                        ),
+                                        const SizedBox(height: 14),
+                                        if (question.options.isEmpty)
+                                          const Text(
+                                            'Ответы не переданы от сервера.',
+                                            style: TextStyle(color: Color(0xFF9CA3AF)),
+                                          )
+                                        else
+                                          ...List.generate(question.options.length, (optionIndex) {
+                                            final isSelected = _answers[question.id] == optionIndex;
+                                            return Padding(
+                                              padding: const EdgeInsets.only(bottom: 10),
+                                              child: OptionTile(
+                                                label: question.options[optionIndex],
+                                                selected: isSelected,
+                                                onTap: () => _selectOption(question, optionIndex),
+                                              ),
+                                            );
+                                          }),
+                                        const SizedBox(height: 14),
+                                        Row(
+                                          children: [
+                                            Expanded(
+                                              child: ElevatedButton(
+                                                onPressed: _currentIndex > 0 ? () => _goTo(_currentIndex - 1) : null,
+                                                style: ElevatedButton.styleFrom(
+                                                  backgroundColor: Colors.white,
+                                                  foregroundColor: const Color(0xFF1E73EC),
+                                                  side: const BorderSide(color: Color(0xFFE5E7EB)),
+                                                ),
+                                                child: const Text('Назад'),
+                                              ),
+                                            ),
+                                            const SizedBox(width: 10),
+                                            Expanded(
+                                              child: ElevatedButton(
+                                                onPressed:
+                                                    _currentIndex < total - 1 ? () => _goTo(_currentIndex + 1) : null,
+                                                child: const Text('Следующий'),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
                                     ),
                                   ),
-                                  const SizedBox(width: 10),
-                                  Expanded(
-                                    child: ElevatedButton(
-                                      onPressed:
-                                          _currentIndex < total - 1 ? () => _goTo(_currentIndex + 1) : null,
-                                      child: const Text('Следующий'),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
+                                ),
+                              );
+                            },
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(8, 12, 8, 20),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(10),
+                          child: LinearProgressIndicator(
+                            value: progress,
+                            minHeight: 8,
+                            backgroundColor: const Color(0xFFE5E7EB),
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                                Theme.of(context).colorScheme.primary.withValues(alpha: 0.9)),
                           ),
                         ),
-                      );
-                    },
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(16, 12, 16, 20),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(10),
-                        child: LinearProgressIndicator(
-                          value: progress,
-                          minHeight: 8,
-                          backgroundColor: const Color(0xFFE5E7EB),
-                          valueColor: AlwaysStoppedAnimation<Color>(
-                              Theme.of(context).colorScheme.primary.withValues(alpha: 0.9)),
+                        const SizedBox(height: 8),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              'Ответы: ${_answers.length}/$total',
+                              style: const TextStyle(color: Color(0xFF6B7280)),
+                            ),
+                            Text(
+                              'Осталось: ${_formatTime(_remainingSeconds)}',
+                              style: const TextStyle(color: Color(0xFF6B7280)),
+                            ),
+                          ],
                         ),
-                      ),
-                      const SizedBox(height: 8),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            'Ответы: ${_answers.length}/$total',
-                            style: const TextStyle(color: Color(0xFF6B7280)),
-                          ),
-                          Text(
-                            'Осталось: ${_formatTime(_remainingSeconds)}',
-                            style: const TextStyle(color: Color(0xFF6B7280)),
-                          ),
-                        ],
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
     );
   }
