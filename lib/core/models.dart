@@ -42,7 +42,13 @@ class TestOption {
     return TestOption(
       id: (json['id'] ?? json['test_id'] ?? '').toString(),
       title: json['title'] ?? json['name'] ?? json['subject'] ?? '',
-      teacher: json['teacher'] ?? json['teacher_name'] ?? 'Преподаватель',
+      // Backend may return teacher under different keys; try all before falling back.
+      teacher: json['teacher'] ??
+          json['teacher_name'] ??
+          json['mentor'] ??
+          json['mentor_name'] ??
+          json['mentor_full_name'] ??
+          'Преподаватель',
       durationMinutes:
           _asInt(json['duration'] ?? json['duration_minutes'] ?? json['time_limit'], 60),
       questionCount: _asInt(json['question_count'] ?? json['question_limit'], questionList.length),

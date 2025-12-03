@@ -77,6 +77,15 @@ class _TestListScreenState extends State<TestListScreen> {
                       ),
                     ),
                   )
+                else if (state.tests.isEmpty)
+                  const Expanded(
+                    child: Center(
+                      child: Text(
+                        'Нет тестов',
+                        style: TextStyle(color: Color(0xFF6B7280)),
+                      ),
+                    ),
+                  )
                 else
                   Expanded(
                     child: ListView.separated(
@@ -130,7 +139,26 @@ class _TestListScreenState extends State<TestListScreen> {
                                   Text('Вопросов: ${test.questionCount}',
                                       style: const TextStyle(color: Color(0xFF6B7280))),
                                   ElevatedButton(
-                                    onPressed: () {
+                                    onPressed: () async {
+                                      final confirmed = await showDialog<bool>(
+                                        context: context,
+                                        builder: (ctx) => AlertDialog(
+                                          title: const Text('Начать тест?'),
+                                          content: Text('Вы уверены, что хотите начать "${test.title}"?'),
+                                          actions: [
+                                            TextButton(
+                                              onPressed: () => Navigator.of(ctx).pop(false),
+                                              child: const Text('Отмена'),
+                                            ),
+                                            ElevatedButton(
+                                              onPressed: () => Navigator.of(ctx).pop(true),
+                                              child: const Text('Начать'),
+                                            ),
+                                          ],
+                                        ),
+                                      );
+                                      if (confirmed != true) return;
+                                      if (!mounted) return;
                                       Navigator.of(context).push(
                                         MaterialPageRoute(
                                           builder: (_) => TestPlayerScreen(

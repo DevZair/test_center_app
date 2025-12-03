@@ -2,7 +2,6 @@ import 'package:flutter/foundation.dart';
 
 import '../../feature/test/data/test_repository.dart';
 import '../models.dart';
-import '../sample_data.dart';
 
 class AppState extends ChangeNotifier {
   AppState({TestRepository? repository}) : repository = repository ?? FastApiTestRepository();
@@ -10,7 +9,7 @@ class AppState extends ChangeNotifier {
   final TestRepository repository;
 
   StudentProfile? profile;
-  List<TestOption> tests = sampleTests;
+  List<TestOption> tests = const [];
   bool isLoadingTests = false;
   String? testsError;
 
@@ -35,7 +34,7 @@ class AppState extends ChangeNotifier {
     } catch (e) {
       testsError = e.toString();
       notifyListeners();
-      return sampleTests.firstWhere((element) => element.id == id, orElse: () => sampleTests.first);
+      rethrow;
     }
   }
 

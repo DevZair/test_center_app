@@ -1,7 +1,6 @@
 import 'package:dio/dio.dart';
 
 import '../../../core/models.dart';
-import '../../../core/sample_data.dart';
 import '../../../core/network/dio_client.dart';
 
 abstract class TestRepository {
@@ -22,22 +21,17 @@ class FastApiTestRepository implements TestRepository {
 
   @override
   Future<List<TestOption>> fetchTests({int? courseId}) async {
-    try {
-      final res = await _dio.get(
-        '/tests',
-        queryParameters: {
-          'course': courseId ?? 1,
-          'page': 1,
-          'size': 200,
-        },
-      );
-      final raw = _extractList(res.data);
-      if (raw.isEmpty) return sampleTests;
-      return raw.map(TestOption.fromJson).toList();
-    } catch (_) {
-      // Fallback to bundled sample if API unavailable in dev or API пуст.
-      return sampleTests;
-    }
+    final res = await _dio.get(
+      '/tests',
+      queryParameters: {
+        'course': courseId ?? 1,
+        'page': 1,
+        'size': 200,
+      },
+    );
+    final raw = _extractList(res.data);
+    // Если список пустой, отдаём пусто, чтобы экран показал "Тест не указан".
+    return raw.map(TestOption.fromJson).toList();
   }
 
   @override
@@ -46,23 +40,18 @@ class FastApiTestRepository implements TestRepository {
     if (int.tryParse(id) == null) {
       throw const FormatException('Non-numeric test id, skip remote detail');
     }
-    try {
-      final res = await _tryPaths(
-        _paths.testDetail(id),
-        (path) => _dio.get(path),
-      );
-      final data = res.data;
-      if (data is Map<String, dynamic>) {
-        if (data['data'] is Map<String, dynamic>) {
-          return TestOption.fromJson(data['data'] as Map<String, dynamic>);
-        }
-        return TestOption.fromJson(data);
+    final res = await _tryPaths(
+      _paths.testDetail(id),
+      (path) => _dio.get(path),
+    );
+    final data = res.data;
+    if (data is Map<String, dynamic>) {
+      if (data['data'] is Map<String, dynamic>) {
+        return TestOption.fromJson(data['data'] as Map<String, dynamic>);
       }
-      throw Exception('Unexpected payload');
-    } catch (_) {
-      // Try to find from list of sample tests.
-      return sampleTests.firstWhere((element) => element.id == id, orElse: () => sampleTests.first);
+      return TestOption.fromJson(data);
     }
+    throw Exception('Unexpected payload');
   }
 
   @override

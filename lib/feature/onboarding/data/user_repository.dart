@@ -16,7 +16,6 @@ class UserRepository {
 
   Future<List<LabeledValue<int>>> fetchGroups() async {
     try {
-      // Рабочий эндпоинт только /groups/.
       final res = await _dio.get('/groups/');
       return _extractNamedInt(res.data);
     } catch (_) {
@@ -28,7 +27,6 @@ class UserRepository {
   }
 
   Future<List<LabeledValue<int>>> fetchCourses() async {
-    // API для курсов отсутствует, используем дефолтный список.
     return const [
       LabeledValue(value: 1, label: '1 курс'),
       LabeledValue(value: 2, label: '2 курс'),

@@ -43,9 +43,16 @@ class _TestPlayerScreenState extends State<TestPlayerScreen> {
     final needsDetail =
         _test.questions.isEmpty || (_test.questionCount > _test.questions.length && _test.questionCount > 0);
     if (needsDetail) {
-      final detailed = await widget.appState.loadTestDetail(_test.id);
-      if (!mounted) return;
-      setState(() => _test = detailed);
+      try {
+        final detailed = await widget.appState.loadTestDetail(_test.id);
+        if (!mounted) return;
+        setState(() => _test = detailed);
+      } catch (e) {
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Не удалось загрузить тест')),
+        );
+      }
     }
     final saved = await _cache!.load(_test.id);
     if (saved.isNotEmpty) {
@@ -91,6 +98,26 @@ class _TestPlayerScreenState extends State<TestPlayerScreen> {
   }
 
   Future<void> _finish({bool auto = false}) async {
+    if (!auto) {
+      final confirm = await showDialog<bool>(
+        context: context,
+        builder: (ctx) => AlertDialog(
+          title: const Text('Завершить тест?'),
+          content: const Text('Вы уверены, что хотите завершить попытку?'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(ctx).pop(false),
+              child: const Text('Продолжить'),
+            ),
+            ElevatedButton(
+              onPressed: () => Navigator.of(ctx).pop(true),
+              child: const Text('Завершить'),
+            ),
+          ],
+        ),
+      );
+      if (confirm != true) return;
+    }
     if (_submitting) return;
     setState(() => _submitting = true);
     _timer?.cancel();
@@ -225,7 +252,12 @@ class _TestPlayerScreenState extends State<TestPlayerScreen> {
         ],
       ),
       body: total == 0
-          ? const Center(child: CircularProgressIndicator.adaptive())
+          ? const Center(
+              child: Text(
+                'Нет вопросов для этого теста',
+                style: TextStyle(color: Color(0xFF6B7280)),
+              ),
+            )
           : Column(
               children: [
                 const SizedBox(height: 8),

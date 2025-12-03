@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../../core/models.dart';
 import '../common/widgets/widgets.dart';
@@ -74,7 +75,12 @@ class TestResultScreen extends StatelessWidget {
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
-                onPressed: () => Navigator.of(context).popUntil((route) => route.isFirst),
+                onPressed: () {
+                  // Try to leave the results flow; pop to root first, then request app exit.
+                  final navigator = Navigator.of(context);
+                  navigator.popUntil((route) => route.isFirst);
+                  SystemNavigator.pop();
+                },
                 child: const Text('На главную'),
               ),
             ),
